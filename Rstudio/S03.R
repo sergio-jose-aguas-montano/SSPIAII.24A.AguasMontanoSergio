@@ -67,6 +67,65 @@ mdl.All.sum
 mdl.R2.sum
 mdl.R1.sum
 
+#--------------------------------------------------------------------------------------
+
+# Predicciones en los datos de entrenamiento
+df.Startups.Train$Predictions_All <- predict(mdl.All, newdata = df.Startups.Train)
+df.Startups.Train$Predictions_R2 <- predict(mdl.R2, newdata = df.Startups.Train)
+df.Startups.Train$Predictions_R1 <- predict(mdl.R1, newdata = df.Startups.Train)
+
+# Predicciones en los datos de prueba
+df.Startups.Test$Predictions_All <- predict(mdl.All, newdata = df.Startups.Test)
+df.Startups.Test$Predictions_R2 <- predict(mdl.R2, newdata = df.Startups.Test)
+df.Startups.Test$Predictions_R1 <- predict(mdl.R1, newdata = df.Startups.Test)
+
+# Gráfico para datos de entrenamiento
+ggplot(df.Startups.Train, aes(x = Profit, y = Predictions_All)) +
+  geom_point(color = "blue") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Entrenamiento - Modelo Completo",
+       x = "Profit",
+       y = "Predicciones")
+
+ggplot(df.Startups.Train, aes(x = Profit, y = Predictions_R2)) +
+  geom_point(color = "green") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Entrenamiento - Modelo R2",
+       x = "Profit",
+       y = "Predicciones")
+
+ggplot(df.Startups.Train, aes(x = Profit, y = Predictions_R1)) +
+  geom_point(color = "orange") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Entrenamiento - Modelo R1",
+       x = "Profit",
+       y = "Predicciones")
+
+# Gráfico para datos de prueba
+ggplot(df.Startups.Test, aes(x = Profit, y = Predictions_All)) +
+  geom_point(color = "blue") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Prueba - Modelo Completo",
+       x = "Profit",
+       y = "Predicciones")
+
+ggplot(df.Startups.Test, aes(x = Profit, y = Predictions_R2)) +
+  geom_point(color = "green") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Prueba - Modelo R2",
+       x = "Profit",
+       y = "Predicciones")
+
+ggplot(df.Startups.Test, aes(x = Profit, y = Predictions_R1)) +
+  geom_point(color = "orange") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(title = "Datos de Prueba - Modelo R1",
+       x = "Profit",
+       y = "Predicciones")
+
+#--------------------------------------------------------------------------------------
+
+
 #Librerías
 library(MASS)
 mdl.Lib <- stepAIC(mdl.All,
