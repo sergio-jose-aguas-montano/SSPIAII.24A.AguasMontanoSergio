@@ -15,6 +15,7 @@ set.seed(2000)
 install.packages("rpart")
 install.packages("rpart.plot")
 install.packages("randomForest")
+install.packages("gridExtra")
 
 library(ggplot2)
 library(caTools)
@@ -27,21 +28,21 @@ library(rpart.plot)
 library(randomForest)
 library(gridExtra)
 
-
 #Preprocesamiento
 PoSal <- read.csv("Position_Salaries.csv",
                         header = T,
                         stringsAsFactors = T)
 summary(PoSal)
 PoSal$Position <- NULL
+
 #Modelo lineal
 mdl.lineal.Position <- lm(formula = Salary ~ Level,
                           data = PoSal)
 summary(mdl.lineal.Position)
 
-
 #Modelo con rpart
 PoSal.rpart <- rpart(formula = Salary ~ Level, data = PoSal, minsplit = 5)
+
 #Gráfico con ayuda del modelo rpart
 rpart.plot(PoSal.rpart)
 
@@ -81,7 +82,6 @@ ggsave(file = "parte1.jpg",
 #Construye la matriz de confusión para evaluar la efectividad de cada modelo
 #Representa los datos en una gráfica de clasificación para ambos casos
 
-
 # Leer el conjunto de datos
 SoNetAds <- read.csv("Social_Network_Ads.csv",
                      header = TRUE,
@@ -93,21 +93,20 @@ SoNetAds$User.ID <- NULL
 # Convertir la variable Purchased a factor
 SoNetAds$Purchased <- as.factor(SoNetAds$Purchased)
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
+# Dividir los datos en conjuntos de entrenamiento y prueba, esta es otra manera de separar los datos en lugar del split
 indice <- sample(2, nrow(SoNetAds), replace = TRUE, prob = c(0.7, 0.3))
 train_data <- SoNetAds[indice == 1, ]
 test_data <- SoNetAds[indice == 2, ]
 
-# Modelo con rpart
+# Modelo con rpart a partir del conjunto de datos y una fórmula de predicción, un árbol de decisión que puede usarse para pronosticar con la funcion de predict
 SoNetAds.rpart <- rpart(formula = Purchased ~ Age + EstimatedSalary, data = train_data, minsplit = 5)
 
 # Realizar predicciones con el modelo rpart
-predictions_rpart <- predict(SoNetAds.rpart, test_data, type = "class")
+predic_rpart <- predict(SoNetAds.rpart, test_data, type = "class")
 
-# Construir la matriz de confusión
-confusion_matrix_rpart <- confusionMatrix(data = predictions_rpart, reference = test_data$Purchased)
-print("Confusion Matrix for rpart:")
-print(confusion_matrix_rpart)
+# Construir la matriz de confusión de los datos
+matriz_rpart <- confusionMatrix(data = predic_rpart, reference = test_data$Purchased)
+print(matriz_rpart)
 
 # Gráfico de clasificación con el modelo rpart
 # Creamos un conjunto de datos para la visualización
@@ -131,16 +130,15 @@ ggsave(file = "pt2_grp1.jpg",
        height = 7,
        width = 14)
 
-# Modelo con Random Forest
+# Modelo con Random Forest utilizando una serie de árboles de desición y así mejorar la tasa de clasificación
 SoNetAds_rf <- randomForest(formula = Purchased ~ Age + EstimatedSalary, data = train_data, ntree = 500)
 
 # Realizar predicciones con el modelo Random Forest
 predictions_rf <- predict(SoNetAds_rf, test_data)
 
 # Construir la matriz de confusión
-confusion_matrix_rf <- confusionMatrix(data = predictions_rf, reference = test_data$Purchased)
-print("Confusion Matrix for Random Forest:")
-print(confusion_matrix_rf)
+matriz_rf <- confusionMatrix(data = predictions_rf, reference = test_data$Purchased)
+print(matriz_rf)
 
 # Gráfico de clasificación con el modelo Random Forest
 # Generar datos para la visualización
@@ -165,15 +163,21 @@ ggsave(file = "pt2_grp2.jpg",
        width = 14)
 
 # Construir una sola gráfica que incluya ambas visualizaciones
-#install.packages("gridExtra")
-
-combined_plot <- grid.arrange(plot_rpart, plot_rf, nrow = 1)
+comparacion <- grid.arrange(plot_rpart, plot_rf, nrow = 1)
 
 ggsave(file = "pt2_comparacion.jpg",
-       plot = combined_plot,
+       plot = comparacion,
        units = "in",
        height = 7,
        width = 14)
 
+#Especificación de exactitud de ambos algoritmos:
+#En el caso de rpart hace un solo aproximado de la información, con lo cual el resultado
+#no es el más preciso pero ayuda a mantener una idea del comportamiento de los datos
+#En el caso de Random Forest, al crear múltiples de árboles de tomas de decisiones puede
+#crear varios escenarios de manera simultánea con diferentes resultados entre ellos,
+#permitiendo que así encontrar uno en el que los valores son más exactos y tener un resultado
+#más real 
+
 # Imprimir la gráfica combinada
-print(combined_plot)
+print(comparacion)
