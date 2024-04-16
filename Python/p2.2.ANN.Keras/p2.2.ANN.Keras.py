@@ -7,8 +7,8 @@ Created on Thu Apr 11 14:25:46 2024
 Actividad: p2.2.ANN.Keras
 """
 
-import tensorflow as tf
-print(tf.__version__)
+#import tensorflow as tf
+#print(tf.__version__)
 
 #Librerias
 import pandas as pd
@@ -60,15 +60,15 @@ ann.add(
 
 #Capa oculta
 ann.add(
-        Dense(units = 6,
+        Dense(units = 10,
               kernel_initializer='uniform',
-              activation = 'sigmoid')
+              activation = 'relu')
         )
 
 #Capa salida
 ann.add(
         Dense(units = 1,
-              activation = 'sigmoid',
+              activation = 'relu',
               kernel_initializer='uniform')
         )
 
@@ -88,7 +88,7 @@ modelo = load_model('p2.2.ANN.Keras.h5')
 
 #Prediccion
 Y_pred = modelo.predict(X_test)
-Y_pred = (Y_pred > 0,5)
+Y_pred = (Y_pred > 0.5)
 
 #Visualizar la arquitectura de la red neuronal
 from keras.utils import plot_model
@@ -98,3 +98,25 @@ plot_model(modelo,
            show_layer_activations=True,
            show_layer_names=True,
            )
+
+from sklearn.metrics import confusion_matrix
+
+# Construir la matriz de confusión
+cm = confusion_matrix(Y_test, Y_pred)
+
+# Mostrar la matriz de confusión
+print("Matriz de Confusión:")
+print(cm)
+
+## La siguientes modificaciones son a base de prueba y error, ya que acorde a la cantidad de 
+## capas y el tipo de funciín que tenga el perceptrón es el resultado que nos dará, entonces
+## se hacen ajustes automáticos hasta obtener mejores resultado, tomando en cuenta la siguiente
+## página que explica la función, ejemplo en python y ventajas y desventajas de cada uno:
+## https://jahazielponce.com/funciones-de-activacion-y-como-puedes-crear-la-tuya-usando-python-r-y-tensorflow/
+
+## Primero: Modificando la capa oculta poniendo 10 unidades
+## Segundo: Modificar la capa de activación a "Relu" tanto en la capa oculta como la final
+## usando relu por su eficiencia en modelos de aprendizaje profundo
+## Tercero: Cada vez que se quiera entrenar el modelo volver a cargar todo el archivo, sino
+## la precisión puede llegar a bajar hasta 0.79 de nuevo
+
