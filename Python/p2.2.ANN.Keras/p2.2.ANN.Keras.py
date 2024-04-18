@@ -120,3 +120,65 @@ print(cm)
 ## Tercero: Cada vez que se quiera entrenar el modelo volver a cargar todo el archivo, sino
 ## la precisión puede llegar a bajar hasta 0.79 de nuevo
 
+import matplotlib.pyplot as plt
+
+# Crear una figura
+plt.figure(figsize=(10, 6))
+
+# Graficar los resultados reales y predichos
+plt.plot(Y_test, marker='o', linestyle='', label='Real')
+plt.plot(Y_pred, marker='x', linestyle='', label='Predicción')
+
+# Añadir etiquetas y leyenda
+plt.xlabel('Índice del caso de prueba')
+plt.ylabel('Valor')
+plt.title('Comparación entre valores reales y predichos')
+plt.legend()
+
+# Mostrar la gráfica
+plt.show()
+
+##### REGRESION LINEAL #####
+# Importar librerías necesarias
+from keras.models import Sequential
+from keras.layers import Dense
+
+# Crear un modelo secuencial
+modelo = Sequential()
+
+# Agregar la capa de entrada
+# El número de unidades/neuronas en esta capa debe ser igual al número de características en tus datos
+# 'input_dim' especifica el número de características de entrada
+modelo.add(Dense(units=6, input_dim=11, activation='relu'))
+
+# Agregar capas ocultas
+# Puedes ajustar la cantidad de capas ocultas y el número de neuronas en cada capa según sea necesario
+modelo.add(Dense(units=10, activation='relu'))
+modelo.add(Dense(units=8, activation='relu'))
+
+# Agregar la capa de salida
+# Para problemas de regresión, la función de activación típicamente es lineal
+# La capa de salida tiene una sola unidad ya que estamos prediciendo un valor numérico
+modelo.add(Dense(units=1, activation='linear'))
+
+# Compilar el modelo
+# Selecciona una función de pérdida adecuada para problemas de regresión, como 'mean_squared_error'
+modelo.compile(optimizer='adam', loss='mean_squared_error')
+
+# Entrenar el modelo
+modelo.fit(X_train, Y_train, epochs=15, batch_size=15)
+
+# Predicción
+Y_pred = modelo.predict(X_test)
+
+# Visualización de la comparación entre valores reales y predichos
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+plt.plot(Y_test, marker='o', linestyle='', label='Real')
+plt.plot(Y_pred, marker='x', linestyle='', label='Predicción')
+plt.xlabel('Índice del caso de prueba')
+plt.ylabel('Valor')
+plt.title('Comparación entre valores reales y predichos')
+plt.legend()
+plt.show()
